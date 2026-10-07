@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 import sqlite3
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 from cardsmith import sm2
@@ -212,8 +212,11 @@ def record_review(
         interval_days=card["interval_days"],
     )
     new_state = sm2.review(state, quality)
-    due_dt = datetime.now(UTC).timestamp() + new_state.interval_days * 86400
-    due_at = datetime.fromtimestamp(due_dt, UTC).isoformat()
+    due_at = (
+        (datetime.fromisoformat(now) + timedelta(days=new_state.interval_days))
+        .astimezone(UTC)
+        .isoformat()
+    )
     conn.execute(
         """UPDATE cards SET repetition = ?, ease_factor = ?, interval_days = ?,
            due_at = ?, last_reviewed_at = ? WHERE id = ?""",

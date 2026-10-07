@@ -1,3 +1,5 @@
+from datetime import UTC, datetime, timedelta
+
 from cardsmith import db
 from cardsmith.llm.schema import Card
 
@@ -69,6 +71,17 @@ def test_record_review_updates_schedule_and_history(tmp_db):
     reviews = conn.execute("SELECT * FROM reviews WHERE card_id = ?", (card["id"],)).fetchall()
     assert len(reviews) == 1
     assert reviews[0]["quality"] == 4
+
+
+def test_record_review_calculates_due_date_from_supplied_time(tmp_db):
+    conn = db.connect(tmp_db)
+    deck_id = db.create_deck(conn, "Biology")
+    card = db.add_card(conn, deck_id, make_card())
+    reviewed_at = datetime(2024, 5, 1, tzinfo=UTC)
+
+    updated = db.record_review(conn, card["id"], quality=4, now=reviewed_at.isoformat())
+
+    assert datetime.fromisoformat(updated["due_at"]) == reviewed_at + timedelta(days=1)
 
 
 def test_next_due_card_respects_due_date(tmp_db):
