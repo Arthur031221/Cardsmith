@@ -1,12 +1,12 @@
-# cardsmith
+# Cardsmith
 
 Offline flashcards. Drop a PDF, a slide deck, or a text file, get a spaced-repetition
 deck built by a local LLM, study it in the browser, export to Anki. No account, no
 cloud, nothing leaves your machine.
 
-![cardsmith: generate a deck from a text file, then study it](assets/demo.gif)
+![Cardsmith: generate a deck from a text file, then study it](assets/demo.gif)
 
-On a 3,248-word public-domain biology chapter, cardsmith generated 152 cards in
+On a 3,248-word public-domain biology chapter, Cardsmith generated 152 cards in
 775.5 seconds. Its mechanical source-quote check matched 142 of 152 cards to an
 exact substring of the input. A 40-card hand rating against the source text
 found 37 factually accurate, 1 inaccurate, and 2 unusable, for 92.5 percent
@@ -19,7 +19,7 @@ accuracy.[^bench]
     Ollama process. The benchmark recorded generation time, counts, and exact quote
     matches. Results and raw cards are in `eval/`. Measured 2026-09-30.
 
-[![CI](https://github.com/Arthur031221/cardsmith/actions/workflows/ci.yml/badge.svg)](https://github.com/Arthur031221/cardsmith/actions/workflows/ci.yml)
+[![CI](https://github.com/Arthur031221/Cardsmith/actions/workflows/ci.yml/badge.svg)](https://github.com/Arthur031221/Cardsmith/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![version](https://img.shields.io/badge/version-0.1.0-informational.svg)](CHANGELOG.md)
 
@@ -30,12 +30,12 @@ Making flashcards by hand from a chapter of reading is slow enough that most peo
 skip it and re-read instead, which is a worse way to study. The AI tools that exist
 either need an account and a subscription, or they generate cards with no way to
 check them against the source text before you start memorizing something wrong.
-cardsmith runs entirely on your machine: the LLM, the scheduler, and the database.
+Cardsmith runs entirely on your machine: the LLM, the scheduler, and the database.
 
 ## Install
 
 ```
-uvx --from git+https://github.com/Arthur031221/cardsmith cardsmith
+uvx --from git+https://github.com/Arthur031221/Cardsmith cardsmith
 ```
 
 This starts the local web UI and opens it in your browser. It needs
@@ -68,7 +68,7 @@ Studying existing decks and exporting to Anki work even without Ollama running.
   for qwen3 models and burn the output budget on hidden reasoning) with `think: false` and a
   JSON schema passed as `format`, so the reply is always parseable. The model is told
   to use only facts in the chunk and to attach a verbatim `source_quote` to every
-  card. cardsmith checks whether that quote is actually a substring of the chunk and
+  card. Cardsmith checks whether that quote is actually a substring of the chunk and
   flags the card in the preview if it is not, rather than trusting the model's claim.
 - **Preview**: generated cards are not written to the database until you click
   **Save deck**. Everything in the preview is editable first.
@@ -81,7 +81,7 @@ Studying existing decks and exporting to Anki work even without Ollama running.
 
 ## Comparison
 
-| | cardsmith | [quenti](https://github.com/quenti-io/quenti) | [AnkiAIUtils](https://github.com/thiswillbeyourgithub/AnkiAIUtils) | [QuizFlow](https://github.com/douxxtech/QuizFlow) | Quizlet |
+| | Cardsmith | [quenti](https://github.com/quenti-io/quenti) | [AnkiAIUtils](https://github.com/thiswillbeyourgithub/AnkiAIUtils) | [QuizFlow](https://github.com/douxxtech/QuizFlow) | Quizlet |
 |---|---|---|---|---|---|
 | Runs offline | yes | no, cloud web app | no, calls a cloud LLM API | no, cloud web app | no |
 | Generates cards from a document | PDF, PPTX, text | manual entry only | Anki add-on, works on existing notes | manual entry only | PDF/notes import (cloud, paid tiers) |
@@ -152,9 +152,9 @@ The web UI is a thin client over a JSON API on the same port:
 
 ## Related projects
 
-- [papercompass](https://github.com/Arthur031221/papercompass): Recommends papers from your own library the way cardsmith turns your own PDFs into cards, both local-first.
+- [papercompass](https://github.com/Arthur031221/papercompass): Recommends papers from your own library the way Cardsmith turns your own PDFs into cards, both local-first.
 - [labexplain](https://github.com/Arthur031221/labexplain): Same shape: a PDF in, a local model does the extraction, nothing leaves your machine.
-- [snipmd](https://github.com/Arthur031221/snipmd): If a source PDF has an equation cardsmith's cards would mangle, snip it separately and paste the LaTeX in.
+- [snipmd](https://github.com/Arthur031221/snipmd): If a source PDF has an equation Cardsmith's cards would mangle, snip it separately and paste the LaTeX in.
 
 ## Contributing
 
