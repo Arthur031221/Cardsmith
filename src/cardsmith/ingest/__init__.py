@@ -12,11 +12,11 @@ class UnsupportedFileError(ValueError):
     """Raised when a file extension is not one cardsmith knows how to ingest."""
 
 
-def extract_any(path: str) -> list[Chunk]:
-    """Dispatch on file extension and return merged chunks ready for card generation."""
+def extract_any(path: str, *, warnings: list[str] | None = None) -> list[Chunk]:
+    """Dispatch on extension, optionally collecting PDF content warnings."""
     lower = path.lower()
     if lower.endswith(".pdf"):
-        return extract_pdf(path)
+        return extract_pdf(path, warnings=warnings)
     if lower.endswith(".pptx"):
         return extract_pptx(path)
     if lower.endswith((".txt", ".md")):

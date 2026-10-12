@@ -120,7 +120,9 @@ cardsmith [--host HOST] [--port PORT] [--db PATH] [--ollama-url URL]
 
 The web UI is a thin client over a JSON API on the same port:
 
-- `POST /api/generate` (multipart file + optional title) returns draft cards
+- `POST /api/generate` (multipart file + optional title) returns draft cards,
+  generation `errors`, and a separate `warnings` array for PDF pages whose content
+  may be missing from the extracted text
 - `POST /api/decks` saves a deck
 - `GET /api/decks`, `GET /api/decks/{id}` list decks and their cards
 - `PUT /api/decks/{id}/cards/{card_id}`, `DELETE /api/decks/{id}/cards/{card_id}`
@@ -138,7 +140,17 @@ The web UI is a thin client over a JSON API on the same port:
   default chunk size) to keep a single request from running for a very long time on
   shared hardware. Split larger documents.
 - No OCR. A scanned PDF with no text layer will extract no text. Run it through an
-  OCR tool first.
+  OCR tool first. Image-only PDF uploads are rejected with guidance before calling
+  the model. In mixed PDFs, pages without extractable text are skipped and listed
+  in warnings above the card preview.
+- PDF equations reach the model as extracted text, if they are present in the text
+  layer. Mathematical layout and symbols may be lost, so check math cards against
+  the original PDF. Images and vector diagrams are not interpreted. Pages with
+  detected images or vector graphics get a warning even when their text can be
+  used. These warnings identify possible omissions, not whether a page contains
+  a meaningful diagram. Transcribe equations or describe diagrams in a `.txt` or
+  `.md` file to include that information. A matching source quote checks extracted
+  text, not the equation's visual layout or the contents of a diagram.
 - No image cards, no audio.
 - Single user, single machine. There is no sync between devices and no login, by
   design.

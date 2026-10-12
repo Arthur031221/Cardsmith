@@ -68,13 +68,14 @@ def create_app(db_path: str, client: ChatClient, cards_per_chunk: int = 4) -> Fa
         if not data:
             raise HTTPException(400, "uploaded file is empty")
 
+        warnings: list[str] = []
         tmp_path = None
         try:
             with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tmp:
                 tmp.write(data)
                 tmp_path = tmp.name
             try:
-                chunks = ingest_mod.extract_any(tmp_path)
+                chunks = ingest_mod.extract_any(tmp_path, warnings=warnings)
             except ingest_mod.UnsupportedFileError as e:
                 raise HTTPException(400, str(e)) from e
             except Exception as e:  # pymupdf/pptx raise their own exception types
@@ -84,7 +85,14 @@ def create_app(db_path: str, client: ChatClient, cards_per_chunk: int = 4) -> Fa
                 os.unlink(tmp_path)
 
         if not chunks:
-            raise HTTPException(400, f"no extractable text found in {name}")
+            detail = f"no extractable text found in {name}"
+            if suffix == ".pdf":
+                detail += (
+                    ". Cardsmith reads PDF text layers and does not perform OCR or interpret "
+                    "images. Run OCR for scanned text, or transcribe equations and describe "
+                    "diagrams in a text file before generating cards."
+                )
+            raise HTTPException(400, detail)
         if len(chunks) > MAX_CHUNKS:
             raise HTTPException(
                 400,
@@ -104,6 +112,7 @@ def create_app(db_path: str, client: ChatClient, cards_per_chunk: int = 4) -> Fa
             "chunk_count": len(chunks),
             "cards": [c.to_dict() for c in cards],
             "errors": errors,
+            "warnings": warnings,
         }
 
     @app.post("/api/decks")

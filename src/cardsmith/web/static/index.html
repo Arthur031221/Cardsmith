@@ -137,8 +137,11 @@
           <input type="text" id="title-input" placeholder="taken from the filename">
         </div>
       </div>
+      <p class="quote">PDFs use extracted text only, with no OCR or interpretation of images or diagrams.
+        Equation layout and symbols may be lost. Review math cards against the original PDF.</p>
       <button class="primary" id="generate-btn">Generate cards</button>
       <div id="generate-status" class="status"></div>
+      <div id="generate-warnings" class="status" role="status" aria-live="polite"></div>
     </div>
     <div id="preview-panel" class="panel" style="display:none">
       <div class="row" style="align-items:center">
@@ -239,6 +242,8 @@ let draftMeta = {};
 $('#generate-btn').addEventListener('click', async () => {
   const fileInput = $('#file-input');
   const status = $('#generate-status');
+  const warnings = $('#generate-warnings');
+  warnings.replaceChildren();
   if (!fileInput.files.length) {
     status.textContent = 'Choose a file first.';
     status.className = 'status error';
@@ -260,6 +265,11 @@ $('#generate-btn').addEventListener('click', async () => {
     status.textContent = `Generated ${data.cards.length} cards from ${data.chunk_count} chunks.` +
       (data.errors.length ? ` (${data.errors.length} chunk(s) failed, see server log)` : '');
     status.className = 'status ok';
+    for (const warning of data.warnings || []) {
+      const message = document.createElement('p');
+      message.textContent = warning;
+      warnings.appendChild(message);
+    }
   } catch (e) {
     status.textContent = e.message;
     status.className = 'status error';
@@ -318,6 +328,7 @@ $('#save-deck-btn').addEventListener('click', async () => {
     status.className = 'status ok';
     draftCards = [];
     draftMeta = {};
+    $('#generate-warnings').replaceChildren();
     $('#preview-panel').style.display = 'none';
     $('#file-input').value = '';
     $('#title-input').value = '';

@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Warn in the generation preview when PDF pages have no extractable text or contain
+  images or vector graphics that are not interpreted. Return these notices in the
+  API's `warnings` array, give image-only uploads OCR and transcription guidance,
+  and explain the limits of PDF equation and diagram extraction.
 - Limit upload reads to one byte over the configured maximum before rejecting oversized files.
 - Fix the Ollama connection check accepting a different tag from the configured model.
 - Hand-rated the 40-card generation benchmark for factual accuracy: 37 of 40
